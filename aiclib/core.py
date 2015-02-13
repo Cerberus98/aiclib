@@ -20,11 +20,12 @@ Created on August 17, 2012
 @author: Justin Hammond, Rackspace Hosting
 """
 
+import errno
 import json
 import logging
-import errno
-import time
 import socket
+import time
+
 try:
     from urllib.parse import urlencode
 except ImportError:
@@ -53,11 +54,12 @@ class CoreLib(object):
         username -- the username to log into the nvp controller
         password -- the password to log into the nvp controller
         """
+        retries = kwargs.get("retries", 3)
         if poolmanager is None:
-            self.conn = urllib3.connection_from_url(uri)
+            self.conn = urllib3.connection_from_url(uri, retries=retries)
 
         else:
-            self.conn = poolmanager.connection_from_url(uri)
+            self.conn = poolmanager.connection_from_url(uri, retries=retries)
 
         self.connection = Connection(connection=self.conn,
                                      username=username,
